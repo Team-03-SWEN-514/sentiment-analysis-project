@@ -97,6 +97,7 @@ resource "aws_route_table_association" "private_subnet_asso" {
 resource "aws_security_group" "vpc-web" {
   name        = "vpc-web"
   description = "VPC web"
+  vpc_id = aws_vpc.main.id
   ingress {
     description = "Allow Port 80"
     from_port   = 80
