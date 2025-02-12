@@ -6,17 +6,6 @@ locals {
   aws_key = var.key_pair
 }
 
-resource "aws_instance" "my_server" {
-  ami           =  var.ami_id
-  key_name      = "${local.aws_key}"
-  instance_type = var.ec2_instance_type
-  # user_data     = file("wp_install.sh")
-  tags = {
-    Name = var.instance_name
-  }
-  vpc_security_group_ids = [ aws_security_group.vpc-web.id ]
-  associate_public_ip_address = true
-}
 resource "aws_vpc" "main" {
  cidr_block = "10.0.0.0/24"
  tags = {
@@ -41,6 +30,27 @@ resource "aws_subnet" "private_subnets" {
    Name = "Private Subnet ${count.index + 1}"
  }
 }
+resource "aws_security_group" "vpc-web" {
+  name        = "vpc-web"
+  description = "VPC web"
+  vpc_id = aws_vpc.main.id
+  ingress {
+    description = "Allow Port 80"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    description = "Allow all IP and ports outbound"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
 resource "aws_internet_gateway" "internet_gateway" {
  vpc_id = aws_vpc.main.id
  tags = {
@@ -94,22 +104,16 @@ resource "aws_route_table_association" "private_subnet_asso" {
  subnet_id      = element(aws_subnet.private_subnets[*].id, count.index)
  route_table_id = aws_route_table.private_route.id
 }
-resource "aws_security_group" "vpc-web" {
-  name        = "vpc-web"
-  description = "VPC web"
-  vpc_id = aws_vpc.main.id
-  ingress {
-    description = "Allow Port 80"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+
+resource "aws_instance" "my_server" {
+  ami           =  var.ami_id
+  key_name      = "${local.aws_key}"
+  instance_type = var.ec2_instance_type
+  # user_data     = file("wp_install.sh")
+  subnet_id     = aws_subnet.public_subnets[0].id
+  tags = {
+    Name = var.instance_name
   }
-  egress {
-    description = "Allow all IP and ports outbound"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  vpc_security_group_ids = [ aws_security_group.vpc-web.id ]
+  associate_public_ip_address = true
   }
-}
