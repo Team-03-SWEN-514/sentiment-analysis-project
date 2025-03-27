@@ -14,7 +14,7 @@ variable "ami_id"{
     default = "ami-05ecb09ab7b9e1f90"
 }
 variable "key_pair"{
-    description = "My keypar"
+    description = "My keypair"
     type = string
     default = "default-keypair"
 }
@@ -29,4 +29,14 @@ variable "private_subnet_cidrs" {
  type        = list(string)
  description = "Private Subnet CIDR values"
  default     = ["10.0.0.128/26", "10.0.0.192/26"]
+}
+
+variable "aws_region" {
+  description = "The AWS region to deploy to"
+  type        = string
+  default     = "us-east-2"  # Default value
+}
+
+variable "layer_bucket" {
+  default = "your-bucket-name" # Replace with your actual bucket
 }

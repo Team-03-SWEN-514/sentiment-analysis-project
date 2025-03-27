@@ -1,3 +1,4 @@
-ec2_instance_type = "t2.micro"
 instance_name = "Group 3 Terraform Project"
-key_pair = "MY_AWS_KEY"
+key_pair = "Key1"
+aws_region = "us-east-1"
+layer_bucket = "swen514bucket"
