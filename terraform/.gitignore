@@ -4,3 +4,4 @@ windows_amd64
 windows_amd64.
 .terraform*
 terraform.tfstate*
+terraform.tfvars
