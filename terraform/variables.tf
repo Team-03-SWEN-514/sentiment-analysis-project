@@ -1,7 +1,7 @@
 variable "instance_name"{
     description = "Value of the Name tag for EC2 instance"
     type = string
-    default = "My TF Instance"
+    default = "Group 3 Terraform Project"
 }
 variable "ec2_instance_type"{
     description = "My EC2 instance type"
