@@ -38,5 +38,5 @@ variable "aws_region" {
 }
 
 variable "layer_bucket" {
-  default = "your-bucket-name" # Replace with your actual bucket
+  default = "swen514-team3-marketbucket" # Replace with your actual bucket
 }
