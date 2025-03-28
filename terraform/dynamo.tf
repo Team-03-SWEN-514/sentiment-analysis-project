@@ -16,7 +16,12 @@
 
   attribute {
     name = "sentiment"
-    type = "S"
+    type = "N"
+  }
+
+  attribute{
+    name="saved"
+    type="BOOL"
   }
 
   global_secondary_index {
