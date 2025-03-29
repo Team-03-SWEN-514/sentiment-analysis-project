@@ -11,7 +11,7 @@
 
   attribute {
     name = "timestamp"
-    type = "N" 
+    type = "S" 
   }
 
   attribute {
@@ -21,12 +21,17 @@
 
   attribute{
     name="saved"
-    type="BOOL"
+    type="N"
   }
 
   global_secondary_index {
     name               = "SentimentIndex"
     hash_key           = "sentiment"
+    projection_type    = "ALL"
+  }
+  global_secondary_index {
+    name               = "SavedIndex"
+    hash_key           = "saved"
     projection_type    = "ALL"
   }
 
