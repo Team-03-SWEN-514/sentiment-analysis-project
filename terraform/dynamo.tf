@@ -24,6 +24,10 @@
     type="N"
   }
 
+attribute{
+  name = "ticker"
+  type = "S"
+}
   global_secondary_index {
     name               = "SentimentIndex"
     hash_key           = "sentiment"
@@ -32,6 +36,11 @@
   global_secondary_index {
     name               = "SavedIndex"
     hash_key           = "saved"
+    projection_type    = "ALL"
+  }
+  global_secondary_index {
+    name               = "TickerIndex"
+    hash_key           = "ticker"
     projection_type    = "ALL"
   }
 
