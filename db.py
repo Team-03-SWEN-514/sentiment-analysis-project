@@ -1,7 +1,7 @@
 import boto3
 from datetime import datetime
 from decimal import Decimal
-dynamodb = boto3.resource('dynamodb', region_name='us-east-2')  # Change region if needed
+dynamodb = boto3.resource('dynamodb', region_name='us-east-2')  
 table = dynamodb.Table('sentiment_results')
 
 def add_sentiment_result(username, sentiment, saved,ticker):
