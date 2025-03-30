@@ -40,3 +40,9 @@ variable "aws_region" {
 variable "layer_bucket" {
   default = "swen514-team3-marketbucket" # Replace with your actual bucket
 }
+
+variable "amplify_github_oauth_token" {
+  description = "OAuth token providing amplify access to the github repository"
+  type = string
+  default = "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"
+}
