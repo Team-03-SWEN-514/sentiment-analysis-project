@@ -137,7 +137,7 @@ function MetricResult({metricName, metricValue, colors}: {metricName: string, me
 
 	return (
 		<div className={`flex flex-row place-items-center p-3 gap-3`}>
-			<Tooltip content={`${resolvedValue * 100}%`} showArrow={true} placement="left">
+			<Tooltip content={`${resolvedValue * 100}%`} showArrow={true} placement="bottom">
 				<CircularProgress
 					size='lg'
 					showValueLabel={true}
