@@ -1,16 +1,7 @@
-resource "random_id" "bucket_suffix" {
-  byte_length = 4
-}
-
-resource "aws_s3_bucket" "layer_bucket" {
-  bucket = "${var.layer_bucket}-${random_id.bucket_suffix.hex}"
-}
-
-resource "aws_s3_object" "yfinance-layer" {
-  bucket = aws_s3_bucket.layer_bucket.bucket
-  key    = "layers/yfinance-layer.zip"
-  source = "${path.module}/../lambda/yfinance-layer.zip"
-  acl    = "private"
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_file = "${path.module}/../lambda/lambda_function.py"
+  output_path = "${path.module}/../lambda/lambda.zip"
 }
 
 resource "aws_iam_role" "lambda_exec" {
@@ -28,6 +19,38 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
+resource "aws_iam_policy" "comprehend_policy" {
+  name        = "lambda_comprehend_policy"
+  description = "Policy for Lambda to call Comprehend"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "comprehend:BatchDetectSentiment"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect   = "Allow",
+        Action   = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_comprehend" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = aws_iam_policy.comprehend_policy.arn
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
@@ -38,8 +61,8 @@ resource "aws_lambda_layer_version" "yfinance" {
   description         = "YFinance and dependencies layer"
   compatible_runtimes = ["python3.13"]
 
-  s3_bucket = aws_s3_bucket.layer_bucket.id
-  s3_key    = aws_s3_object.yfinance-layer.key
+  filename            = "${path.module}/../lambda/yfinance-layer.zip"  # local ZIP file path
+  source_code_hash    = filebase64sha256("${path.module}/../lambda/yfinance-layer.zip")
 }
 
 resource "aws_lambda_function" "news_lambda" {
@@ -47,9 +70,9 @@ resource "aws_lambda_function" "news_lambda" {
   role          = aws_iam_role.lambda_exec.arn
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.13"
-  filename      = "../lambda/lambdapackage.zip" # path to zip
+  filename      = data.archive_file.lambda_zip.output_path
 
-  source_code_hash = filebase64sha256("../lambda/lambdapackage.zip")
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 
   layers = [
     aws_lambda_layer_version.yfinance.arn
