@@ -6,8 +6,16 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-2')
 table = dynamodb.Table('sentiment_results')
 
 def add_sentiment_result(event, context):
-    body_data = event.get("body", {})
-    if not "ticker" in body_data:
+    try:
+        body_data = json.loads(event.get("body", "{}"))
+    except json.JSONDecodeError:
+        return {
+            "isBase64Encoded": False,
+            "statusCode": 400,
+            "body": "Invalid JSON",
+        }
+    
+    if "ticker" not in body_data:
         return {
             "isBase64Encoded": False,
             "statusCode": 404,
@@ -32,8 +40,16 @@ def add_sentiment_result(event, context):
     }
 
 def update_sentiment_result(event, context):
-    body_data = event.get("body", {})
-    if not "ticker" in body_data:
+    try:
+        body_data = json.loads(event.get("body", "{}"))
+    except json.JSONDecodeError:
+        return {
+            "isBase64Encoded": False,
+            "statusCode": 400,
+            "body": "Invalid JSON",
+        }
+    
+    if "ticker" not in body_data:
         return {
             "isBase64Encoded": False,
             "statusCode": 404,

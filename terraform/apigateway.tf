@@ -52,6 +52,24 @@ resource "aws_iam_policy" "comprehend_policy" {
   })
 }
 
+resource "aws_iam_policy" "dynamodb_full_access" {
+  name        = "dynamodb-full-access"
+  description = "Allow Lambda full access to all DynamoDB tables"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "dynamodb:*"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role_policy_attachment" "attach_comprehend" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = aws_iam_policy.comprehend_policy.arn
@@ -60,6 +78,11 @@ resource "aws_iam_role_policy_attachment" "attach_comprehend" {
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "attach_dynamodb_full" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = aws_iam_policy.dynamodb_full_access.arn
 }
 
 resource "aws_lambda_layer_version" "yfinance" {
@@ -128,6 +151,20 @@ resource "aws_api_gateway_method" "get_ticker" {
   }
 }
 
+resource "aws_api_gateway_method" "add_sentiment_result" {
+  rest_api_id   = aws_api_gateway_rest_api.market_api.id
+  resource_id   = data.aws_api_gateway_resource.root.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_method" "update_sentiment_result" {
+  rest_api_id   = aws_api_gateway_rest_api.market_api.id
+  resource_id   = data.aws_api_gateway_resource.root.id
+  http_method   = "PUT"
+  authorization = "NONE"
+}
+
 # Lambda proxy integration
 resource "aws_api_gateway_integration" "lambda_proxy" {
   rest_api_id             = aws_api_gateway_rest_api.market_api.id
@@ -138,20 +175,60 @@ resource "aws_api_gateway_integration" "lambda_proxy" {
   uri                     = aws_lambda_function.news_lambda.invoke_arn
 }
 
-# Lambda permission for API Gateway
-resource "aws_lambda_permission" "allow_apigw_invoke" {
-  statement_id  = "AllowAPIGatewayInvoke"
+resource "aws_api_gateway_integration" "add_sentiment_result" {
+  rest_api_id             = aws_api_gateway_rest_api.market_api.id
+  resource_id             = data.aws_api_gateway_resource.root.id
+  http_method             = aws_api_gateway_method.add_sentiment_result.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.add_sentiment_result.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "update_sentiment_result" {
+  rest_api_id             = aws_api_gateway_rest_api.market_api.id
+  resource_id             = data.aws_api_gateway_resource.root.id
+  http_method             = aws_api_gateway_method.update_sentiment_result.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.update_sentiment_result.invoke_arn
+}
+
+# Permission for GET -> news_lambda
+resource "aws_lambda_permission" "allow_apigw_invoke_news" {
+  statement_id  = "AllowAPIGatewayInvokeGET"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.news_lambda.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.market_api.execution_arn}/*/GET/"
 }
 
+# Permission for POST -> add_sentiment_result
+resource "aws_lambda_permission" "allow_apigw_invoke_add" {
+  statement_id  = "AllowAPIGatewayInvokePOST"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.add_sentiment_result.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.market_api.execution_arn}/*/POST/"
+}
+
+# Permission for PUT -> update_sentiment_result
+resource "aws_lambda_permission" "allow_apigw_invoke_update" {
+  statement_id  = "AllowAPIGatewayInvokePUT"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.update_sentiment_result.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.market_api.execution_arn}/*/PUT/"
+}
+
 # Deployment + Stage
 resource "aws_api_gateway_deployment" "market_api_deployment" {
-  depends_on = [aws_api_gateway_integration.lambda_proxy]
+  depends_on = [
+    aws_api_gateway_integration.lambda_proxy,
+    aws_api_gateway_integration.add_sentiment_result,
+    aws_api_gateway_integration.update_sentiment_result
+  ]
   rest_api_id = aws_api_gateway_rest_api.market_api.id
-  description = "Deploying GET /?ticker="
+  description = "Deploying all routes"
 }
 
 resource "aws_api_gateway_stage" "prod" {
