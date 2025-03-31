@@ -8,6 +8,7 @@ resource "aws_amplify_app" "stock_sentiment_app" {
 	enable_branch_auto_deletion = true
 
 	access_token = "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"
+	platform     = "WEB_COMPUTE"
 
 	auto_branch_creation_config {
 	  	enable_auto_build = true
