@@ -10,9 +10,23 @@ Amplify.configure(outputs);
 
 // Axios API
 const api = axios.create({
-	baseURL: process.env.API_URL,
+	baseURL: process.env.NEXT_PUBLIC_API_URL,
 	withCredentials: true,
 });
+
+interface ISentimentScore
+{
+	Positive: number
+	Negative: number
+	Mixed: number
+	Neutral: number
+}
+
+interface ISentiment
+{
+	Sentiment: string
+	SentimentScore: ISentimentScore
+}
 
 const submitQuery = async (query: string) =>
 {
@@ -28,34 +42,19 @@ const submitQuery = async (query: string) =>
 
 	try
 	{
-		// TODO: API call
-		// const response = await api.get(`/stock/${query}`);
+		const response = await api.get(`/market?ticker={query}`);
 
-		await new Promise(resolve => setTimeout(resolve, 1000));
-
-		const response = {
-			body: {
-				Sentiment: {
-					Sentiment: "POSITIVE",
-					SentimentScore: {
-						Positive: 0.6254,
-						Negative: 0.0011,
-						Neutral: 0.2346,
-						Mixed: 0.1387
-					}
-				}
-			}
-		}
+		const data = response.data['sentiment_response'][0] as ISentiment;
 
 		return (
 			{
 				status: 'success',
-				sentiment: response.body.Sentiment.Sentiment,
+				sentiment: data.Sentiment,
 				metrics: {
-					positive: response.body.Sentiment.SentimentScore.Positive,
-					negative: response.body.Sentiment.SentimentScore.Negative,
-					neutral: response.body.Sentiment.SentimentScore.Neutral,
-					mixed: response.body.Sentiment.SentimentScore.Mixed,
+					positive: data.SentimentScore.Positive,
+					negative: data.SentimentScore.Negative,
+					neutral: data.SentimentScore.Neutral,
+					mixed: data.SentimentScore.Mixed,
 				}
 			}
 		)
