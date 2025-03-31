@@ -202,6 +202,7 @@ export default function App()
 			justify-center
 			justify-items-center
 		`}>
+			<p>{process.env.NEXT_PUBLIC_API_URL}</p>
 			<div className={`
 				mx-5 md:mx-0 md:w-1/2
 				self-center
