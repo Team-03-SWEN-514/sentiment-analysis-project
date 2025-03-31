@@ -1,12 +1,12 @@
 "use client";
 
 import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
+// import outputs from "@/amplify_outputs.json";
 import {FormEvent, useState} from "react";
 import axios from "axios";
 import {Button, CircularProgress, Form, Input, Spinner, Tooltip} from "@heroui/react";
 
-Amplify.configure(outputs);
+// Amplify.configure(outputs);
 
 // Axios API
 const api = axios.create({
@@ -253,7 +253,7 @@ export default function App()
 				<InsetSection className={`
 					h-[50vh] 
 					bg-gray-200
-					bg-opacity-100
+					!bg-opacity-100
 				`}>
 					<div className={`
 						w-full h-full
