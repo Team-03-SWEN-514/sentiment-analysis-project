@@ -236,3 +236,9 @@ resource "aws_api_gateway_stage" "prod" {
   rest_api_id   = aws_api_gateway_rest_api.market_api.id
   stage_name    = "market"
 }
+
+# output url for amplify to use
+output "api_gateway_url" {
+  value = "https://${aws_api_gateway_rest_api.market_api.id}.execute-api.${var.aws_region}.amazonaws.com/${aws_api_gateway_stage.prod.stage_name}"
+  description = "Invoke URL for the deployed API Gateway"
+}
