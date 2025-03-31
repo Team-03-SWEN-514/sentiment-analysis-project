@@ -122,12 +122,25 @@ resource "aws_sns_topic" "stock" {
   name = "stock-topic"
 }
 
-resource "aws_sns_topic_subscription" "email" {
-  topic_arn = aws_sns_topic.stock.arn
-  protocol = "email"
-  endpoint = "eja9979@rit.edu"
+resource "aws_sns_topic_policy" "allow_public_subscribe" {
+  arn = aws_sns_topic.stock.arn
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = "*"
+        Action = "SNS:Subscribe"
+        Resource = aws_sns_topic.stock.arn
+        Condition = {
+          StringLike = {
+            "SNS:Protocol" = ["email", "sms", "application"]
+          }
+        }
+      }
+    ]
+  })
 }
-
 resource "aws_cloudwatch_log_group" "stock_log_group" {
   name = "stock-log-group"
 }
