@@ -26,7 +26,7 @@ resource "aws_amplify_app" "stock_sentiment_app" {
 				- npm ci
 			build:
 			commands:
-				- npm run build
+				- npm run build:ssr-v2
 		artifacts:
 			baseDirectory: .next
 			files:
@@ -34,6 +34,8 @@ resource "aws_amplify_app" "stock_sentiment_app" {
 		cache:
 			paths:
 			- node_modules/**/*
+			- .npm/**/*
+			- .next/cache/**/*
 	EOT
 }
 
