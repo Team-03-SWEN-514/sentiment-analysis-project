@@ -2,8 +2,43 @@ import boto3
 import json
 from decimal import Decimal
 
-dynamodb = boto3.resource('dynamodb', region_name='us-east-2')  
-table = dynamodb.Table('sentiment_results')
+dynamodb = boto3.resource("dynamodb", region_name="us-east-2")
+table = dynamodb.Table("sentiment_results")
+
+# Custom encoder for Decimal objects
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, Decimal):
+            return float(o)  # or int(o) if needed
+        return super(DecimalEncoder, self).default(o)
+
+def get_sentiment_result(event, context):
+    if (
+        "queryStringParameters" not in event
+        or "ticker" not in event["queryStringParameters"]
+    ):
+        return {
+            "isBase64Encoded": False,
+            "statusCode": 404,
+            "body": "No ticker is provided",
+        }
+
+    ticker = event["queryStringParameters"]["ticker"]
+
+    if ticker:
+        response = table.get_item(Key={"ticker": ticker})
+        return {
+            "isBase64Encoded": False,
+            "statusCode": 200,
+            "body": json.dumps(response.get("Item", None), cls=DecimalEncoder),
+        }
+    response = table.scan()
+    return {
+        "isBase64Encoded": False,
+        "statusCode": 200,
+        "body": json.dumps(response.get("Items", []), cls=DecimalEncoder),
+    }
+
 
 def add_sentiment_result(event, context):
     try:
@@ -14,30 +49,29 @@ def add_sentiment_result(event, context):
             "statusCode": 400,
             "body": "Invalid JSON",
         }
-    
+
     if "ticker" not in body_data:
         return {
             "isBase64Encoded": False,
             "statusCode": 404,
             "body": "No ticker is provided",
         }
-    
+
     response = table.put_item(
         Item={
-            'ticker': body_data["ticker"],
-            'positive': Decimal(str(body_data.get("positive", 0))),
-            'negative': Decimal(str(body_data.get("negative", 0))),
-            'neutral': Decimal(str(body_data.get("neutral", 0))),
-            'mixed':Decimal(str(body_data.get("mixed", 0))),
+            "ticker": body_data["ticker"],
+            "positive": Decimal(str(body_data.get("positive", 0))),
+            "negative": Decimal(str(body_data.get("negative", 0))),
+            "neutral": Decimal(str(body_data.get("neutral", 0))),
+            "mixed": Decimal(str(body_data.get("mixed", 0))),
         }
     )
     return {
         "isBase64Encoded": False,
         "statusCode": 200,
-        "body": json.dumps(
-            {"response": "success"}
-        ),
+        "body": json.dumps({"response": "success"}),
     }
+
 
 def update_sentiment_result(event, context):
     try:
@@ -48,14 +82,14 @@ def update_sentiment_result(event, context):
             "statusCode": 400,
             "body": "Invalid JSON",
         }
-    
+
     if "ticker" not in body_data:
         return {
             "isBase64Encoded": False,
             "statusCode": 404,
             "body": "No ticker is provided",
         }
-    
+
     update_expression = []
     expression_attribute_values = {}
     if "positive" in body_data:
@@ -76,21 +110,20 @@ def update_sentiment_result(event, context):
     update_expression = "SET " + ", ".join(update_expression)
 
     response = table.update_item(
-        Key={'ticker': body_data["ticker"]},
+        Key={"ticker": body_data["ticker"]},
         UpdateExpression=update_expression,
         ExpressionAttributeValues=expression_attribute_values,
-        ReturnValues="UPDATED_NEW"
+        ReturnValues="UPDATED_NEW",
     )
-    
+
     return {
         "isBase64Encoded": False,
         "statusCode": 200,
-        "body": json.dumps(
-            {"response": "success"}
-        ),
+        "body": json.dumps({"response": "success"}),
     }
+
+
 # response = add_sentiment_result("NVDA", 0.2, 0.1,0.3,0.5)
 # response = update_sentiment_result("NVDA",positive=0.5,mixed=0.2)
 
 # print("Item added:", response)
- 
