@@ -1,12 +1,12 @@
 "use client";
 
 import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
+// import outputs from "@/amplify_outputs.json";
 import {FormEvent, useState} from "react";
 import axios from "axios";
 import {Button, CircularProgress, Form, Input, Spinner, Tooltip} from "@heroui/react";
 
-Amplify.configure(outputs);
+// Amplify.configure(outputs);
 
 // Axios API
 const api = axios.create({
