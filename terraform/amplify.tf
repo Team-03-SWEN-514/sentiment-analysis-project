@@ -27,7 +27,7 @@ resource "aws_amplify_app" "stock_sentiment_app" {
 				- npm ci
 			build:
 			commands:
-				- npm run build:ssr-v2
+				- npm run build
 		artifacts:
 			baseDirectory: .next
 			files:
@@ -38,34 +38,16 @@ resource "aws_amplify_app" "stock_sentiment_app" {
 			- .npm/**/*
 			- .next/cache/**/*
 	EOT
+
+	environment_variables = {
+		NEXT_PUBLIC_API_URL = "https://${aws_api_gateway_rest_api.market_api.id}.execute-api.${var.aws_region}.amazonaws.com/${aws_api_gateway_stage.prod.stage_name}"
+	}
 }
 
 resource "aws_amplify_branch" "amplify" {
 	app_id = aws_amplify_app.stock_sentiment_app.id
 	branch_name = "amplify"
 }
-
-# data "aws_iam_policy" "AmplifyAdmin" {
-#   	arn = "arn:aws:iam::aws:policy/AmplifyAdmin"
-# }
-
-# data "aws_iam_policy_document" "amplify_policy" {
-#   statement {
-#     effect  = "Allow"
-#     actions = ["sts:AssumeRole"]
-#     principals {
-#       type        = "Service"
-#       identifiers = ["amplify.amazonaws.com"]
-#     }
-#   }
-# }
-
-# resource "aws_iam_role" "amplify_service_role" {
-# 	name = "amplify_service_role"
-# 	path = "/system/"
-# 	assume_role_policy = data.aws_iam_policy.AmplifyAdmin.arn
-# 	# assume_role_policy = data.aws_iam_policy_document.amplify_policy.json
-# }
 
 # Get the policy by name
 data "aws_iam_policy" "amplify_admin_policy" {
