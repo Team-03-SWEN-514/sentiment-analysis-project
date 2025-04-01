@@ -5,12 +5,14 @@ from decimal import Decimal
 dynamodb = boto3.resource("dynamodb", region_name="us-east-2")
 table = dynamodb.Table("sentiment_results")
 
+
 # Custom encoder for Decimal objects
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, Decimal):
             return float(o)  # or int(o) if needed
         return super(DecimalEncoder, self).default(o)
+
 
 def get_sentiment_result(event, context):
     if (
@@ -20,6 +22,11 @@ def get_sentiment_result(event, context):
         return {
             "isBase64Encoded": False,
             "statusCode": 404,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+            },
             "body": "No ticker is provided",
         }
 
@@ -30,12 +37,22 @@ def get_sentiment_result(event, context):
         return {
             "isBase64Encoded": False,
             "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+            },
             "body": json.dumps(response.get("Item", None), cls=DecimalEncoder),
         }
     response = table.scan()
     return {
         "isBase64Encoded": False,
         "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+            "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+        },
         "body": json.dumps(response.get("Items", []), cls=DecimalEncoder),
     }
 
@@ -47,6 +64,11 @@ def add_sentiment_result(event, context):
         return {
             "isBase64Encoded": False,
             "statusCode": 400,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+            },
             "body": "Invalid JSON",
         }
 
@@ -54,6 +76,11 @@ def add_sentiment_result(event, context):
         return {
             "isBase64Encoded": False,
             "statusCode": 404,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+            },
             "body": "No ticker is provided",
         }
 
@@ -69,6 +96,11 @@ def add_sentiment_result(event, context):
     return {
         "isBase64Encoded": False,
         "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+            "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+        },
         "body": json.dumps({"response": "success"}),
     }
 
@@ -80,6 +112,11 @@ def update_sentiment_result(event, context):
         return {
             "isBase64Encoded": False,
             "statusCode": 400,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+            },
             "body": "Invalid JSON",
         }
 
@@ -87,6 +124,11 @@ def update_sentiment_result(event, context):
         return {
             "isBase64Encoded": False,
             "statusCode": 404,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+            },
             "body": "No ticker is provided",
         }
 
@@ -119,6 +161,11 @@ def update_sentiment_result(event, context):
     return {
         "isBase64Encoded": False,
         "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+            "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+        },
         "body": json.dumps({"response": "success"}),
     }
 

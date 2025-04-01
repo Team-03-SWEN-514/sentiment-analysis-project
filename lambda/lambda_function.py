@@ -11,6 +11,11 @@ def lambda_handler(event, context):
         return {
             "isBase64Encoded": False,
             "statusCode": 404,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+            },
             "body": "No ticker is provided",
         }
 
@@ -31,6 +36,11 @@ def lambda_handler(event, context):
     return {
         "isBase64Encoded": False,
         "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+            "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+        },
         "body": json.dumps(
             {"sentiment_response": response["ResultList"], "news": all_news}
         ),
