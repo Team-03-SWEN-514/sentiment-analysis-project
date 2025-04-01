@@ -42,22 +42,47 @@ const submitQuery = async (query: string) =>
 
 	try
 	{
-		const response = await api.get(`/market?ticker=${query}`);
+		// const response = await api.get(`/market?ticker=${query}`);
 
-		const data = response.data['sentiment_response'][0] as ISentiment;
+		// const data = response.data['sentiment_response'][0] as ISentiment;
 
-		return (
-			{
+		switch (query)
+		{
+			case 'AAPL': return {
 				status: 'success',
-				sentiment: data.Sentiment,
+				sentiment: 'Positive',
 				metrics: {
-					positive: data.SentimentScore.Positive,
-					negative: data.SentimentScore.Negative,
-					neutral: data.SentimentScore.Neutral,
-					mixed: data.SentimentScore.Mixed,
+					positive: 0.632245,
+					negative: 0.1237389273,
+					neutral: 0.0523748923,
+					mixed: 0.20167238916293,
 				}
 			}
-		)
+
+			case 'VTI': return {
+				status: 'success',
+				sentiment: 'Negative',
+				metrics: {
+					positive: 0.1237389273,
+					negative: 0.632245,
+					neutral: 0.20167238916293,
+					mixed: 0.0523748923,
+				}
+			}
+		}
+
+		// return (
+		// 	{
+		// 		status: 'success',
+		// 		sentiment: data.Sentiment,
+		// 		metrics: {
+		// 			positive: data.SentimentScore.Positive,
+		// 			negative: data.SentimentScore.Negative,
+		// 			neutral: data.SentimentScore.Neutral,
+		// 			mixed: data.SentimentScore.Mixed,
+		// 		}
+		// 	}
+		// )
 	}
 
 	catch (e)
