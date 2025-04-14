@@ -92,17 +92,41 @@ const submitSubscribe = async (email: string) =>
     }
 }
 
-const submitSave = async (email: string) =>
+const submitSave = async (query: string, metrics: IMetrics | undefined) =>
 {
-    try
-    {
-        // await api.post(`/save?email=${email}`)
-    }
+	if (metrics === undefined)
+	{
+		throw Error("metrics are not defined")
+	}
 
-    catch (e)
-    {
+	await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/db`,
+	{
+		ticker: query,
+		...metrics,
+	},
+	{
+		headers: {
+			'Content-Type': 'text/json'
+		},
+	});
+}
 
-    }
+const getSavedStocks = async () =>
+{
+	try
+	{
+		await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/db`,
+		{
+			headers: {
+				'Content-Type': 'text/json'
+			}
+		});
+	}
+
+	catch (e)
+	{
+
+	}
 }
 
 function InsetShadowOverlay({className=''}) {
@@ -265,6 +289,7 @@ function MetricsDisplay({result}: { result: IResult })
 export default function App()
 {
 	const [error, setError] = useState('');
+	const [query, setQuery] = useState('');
 	const [result, setResult] = useState<IResult>({} as IResult);
 	const [loading, setLoading] = useState(false);
 	const [email, setEmail] = useState('');
@@ -339,6 +364,8 @@ export default function App()
 							classNames={{
 								inputWrapper: 'rounded-r-none'
 							}}
+							value={query}
+							onValueChange={setQuery}
 							type='text'
 						/>
 						<Button type={`submit`} className={`
@@ -411,7 +438,7 @@ export default function App()
 									</Button>
 								</Tooltip>
 								<Tooltip content={`Save this stock`} showArrow={true} placement="top">
-									<Button className={`h-[3.5rem]`} onPress={() => submitSave(email)}>
+									<Button className={`h-[3.5rem]`} onPress={() => submitSave(query, result.metrics)}>
 										Save
 									</Button>
 								</Tooltip>
