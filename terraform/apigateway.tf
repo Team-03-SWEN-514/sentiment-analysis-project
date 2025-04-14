@@ -400,3 +400,22 @@ output "api_gateway_url" {
   value = "https://${aws_api_gateway_rest_api.market_api.id}.execute-api.${var.aws_region}.amazonaws.com/${aws_api_gateway_stage.prod.stage_name}"
   description = "Invoke URL for the deployed API Gateway"
 }
+
+resource "aws_api_gateway_integration_response" "cors_response_root" {
+  rest_api_id = aws_api_gateway_rest_api.market_api.id
+  resource_id = data.aws_api_gateway_resource.root.id
+  http_method = "OPTIONS"
+  status_code = "200"
+
+  response_parameters =   {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+
+  response_templates = {
+    "application/json" = ""
+  }
+
+  depends_on = [aws_api_gateway_integration.options_root]
+}
