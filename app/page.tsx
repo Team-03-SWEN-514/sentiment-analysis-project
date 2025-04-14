@@ -387,7 +387,7 @@ export default function App()
 		<main className={`
 			w-[100vw]
 			h-[100vh]
-			bg-red-500
+			bg-stone-800
 			overflow-x-hidden
 			overflow-y-hidden
 			flex flex-col 
