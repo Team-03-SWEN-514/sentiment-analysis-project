@@ -286,6 +286,71 @@ function MetricsDisplay({result}: { result: IResult })
 	)
 }
 
+interface IResultsContentProperties
+{
+	result: IResult
+	query: string
+	email: string
+	setEmail: (value: string) => void
+}
+
+function ResultsContent({result, query, email, setEmail}: IResultsContentProperties)
+{
+	return (
+		<div className={`
+			w-full h-full
+			max-w-full
+			
+			flex flex-col
+			${(result?.sentiment === undefined) ? 'hidden' : ''}
+		`}>
+			<div className={`
+				px-5 pt-4 pb-1
+				text-red-500
+			`}>
+				<h2 className={`
+					text-xl font-bold
+				`}>Analysis for '{result.query}'</h2>
+				<p className={``}>Overall sentiment: {result.sentiment}</p>
+			</div>
+			<MetricsDisplay result={result}/>
+			<div
+				className={`
+									flex flex-row
+									gap-3
+									px-3
+								`}
+			>
+				<Input
+					label={`Email`}
+					labelPlacement='inside'
+					placeholder={`Enter your email address...`}
+					isClearable={true}
+					maxLength={50}
+					name={`query`}
+					className={`min-h-[3.5rem] rounded-r-none shrink`}
+					classNames={{
+						inputWrapper: ''
+					}}
+					value={email}
+					onValueChange={setEmail}
+					type='email'
+				/>
+				<Tooltip content={`Receive email notifications about this stock`} showArrow={true} placement="top">
+					<Button className={`h-[3.5rem]`} onPress={() => submitSubscribe(email)}>
+						Subscribe
+					</Button>
+				</Tooltip>
+				<Tooltip content={`Save this stock`} showArrow={true} placement="top">
+					<Button className={`h-[3.5rem]`} onPress={() => submitSave(query, result.metrics)}>
+						Save
+					</Button>
+				</Tooltip>
+			</div>
+		</div>
+	)
+}
+
 export default function App()
 {
 	const [error, setError] = useState('');
@@ -392,58 +457,7 @@ export default function App()
 						relative
 					`}>
 						<LoadingContent loading={loading}/>
-						<div className={`
-							w-full h-full
-							max-w-full
-							
-							flex flex-col
-							${(result?.sentiment === undefined) ? 'hidden' : ''}
-						`}>
-							<div className={`
-								px-5 pt-4 pb-1
-								text-red-500
-							`}>
-								<h2 className={`
-									
-									text-xl font-bold
-								`}>Analysis for '{result.query}'</h2>
-								<p className={``}>Overall sentiment: {result.sentiment}</p>
-							</div>
-							<MetricsDisplay result={result}/>
-							<div
-								className={`
-									flex flex-row
-									gap-3
-									px-3
-								`}
-							>
-								<Input
-									label={`Email`}
-									labelPlacement='inside'
-									placeholder={`Enter your email address...`}
-									isClearable={true}
-									maxLength={50}
-									name={`query`}
-									className={`min-h-[3.5rem] rounded-r-none shrink`}
-									classNames={{
-										inputWrapper: ''
-									}}
-									value={email}
-									onValueChange={setEmail}
-									type='email'
-								/>
-								<Tooltip content={`Receive email notifications about this stock`} showArrow={true} placement="top">
-									<Button className={`h-[3.5rem]`} onPress={() => submitSubscribe(email)}>
-										Subscribe
-									</Button>
-								</Tooltip>
-								<Tooltip content={`Save this stock`} showArrow={true} placement="top">
-									<Button className={`h-[3.5rem]`} onPress={() => submitSave(query, result.metrics)}>
-										Save
-									</Button>
-								</Tooltip>
-							</div>
-						</div>
+						<ResultsContent email={email} result={result} query={query} setEmail={setEmail}/>
 						<div className={`
 							w-full h-full
 							flex flex-col
