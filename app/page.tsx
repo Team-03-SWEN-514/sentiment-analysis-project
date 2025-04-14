@@ -13,7 +13,8 @@ const api = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_API_URL,
 	withCredentials: true,
 	headers: {
-		'Content-Type': 'text/json'
+		'Content-Type': 'text/json',
+		'Access-Control-Allow-Credentials': 'true'
 	}
 });
 
@@ -46,7 +47,7 @@ const submitQuery = async (query: string) =>
 	try
 	{
 		// const response = await api.get(`/market?ticker=${query}`);
-
+		//
 		// const data = response.data['sentiment_response'][0] as ISentiment;
 
 		switch (query)
@@ -96,6 +97,32 @@ const submitQuery = async (query: string) =>
 				message: 'Internal error'
 			}
 		)
+	}
+}
+
+const submitSubscribe = async (email: string) =>
+{
+	try
+	{
+		// await api.post(`/subscribe?email=${email}`)
+	}
+
+	catch (e)
+	{
+
+	}
+}
+
+const submitSave = async (email: string) =>
+{
+	try
+	{
+		// await api.post(`/save?email=${email}`)
+	}
+
+	catch (e)
+	{
+
 	}
 }
 
@@ -188,11 +215,80 @@ function MetricResult({metricName, metricValue, colors}: {metricName: string, me
 	)
 }
 
+function LoadingContent({loading}: {loading: boolean})
+{
+	return (
+		<div className={`
+			w-full h-full
+			flex flex-col
+			justify-center
+			justify-items-center
+			${loading ? '' : 'hidden'}
+		`}>
+			<Spinner size='lg' classNames={
+				{
+					circle1: 'border-b-red-500',
+					circle2: 'border-b-red-500'
+				}
+			}/>
+		</div>
+	)
+}
+
+function MetricsDisplay({result}: { result: IResult })
+{
+	return (
+		<div className={`
+			flex flex-col md:flex-row
+			max-w-full
+			flex-wrap
+		`}>
+			<MetricResult
+				metricName={`Positive`}
+				metricValue={result?.metrics?.positive}
+				colors={{
+					indicatorStroke: 'stroke-green-700',
+					trackStroke: 'stroke-green-700/30',
+					text: 'text-green-700'
+				}}
+			/>
+			<MetricResult
+				metricName={`Negative`}
+				metricValue={result?.metrics?.negative}
+				colors={{
+					indicatorStroke: 'stroke-red-500',
+					trackStroke: 'stroke-red-300',
+					text: 'text-red-500'
+				}}
+			/>
+			<MetricResult
+				metricName={`Mixed`}
+				metricValue={result?.metrics?.mixed}
+				colors={{
+					indicatorStroke: 'stroke-amber-500',
+					trackStroke: 'stroke-amber-500/30',
+					text: 'text-amber-500'
+				}}
+			/>
+			<MetricResult
+				metricName={`Neutral`}
+				metricValue={result?.metrics?.neutral}
+				colors={{
+					indicatorStroke: 'stroke-gray-500',
+					trackStroke: 'stroke-gray-500/30',
+					text: 'text-gray-500'
+				}}
+			/>
+		</div>
+	)
+}
+
 export default function App()
 {
 	const [error, setError] = useState('');
 	const [result, setResult] = useState<IResult>({} as IResult);
 	const [loading, setLoading] = useState(false);
+	const [email, setEmail] = useState('');
 
 	const onSubmit = async (e: FormEvent<HTMLFormElement>) =>
 	{
@@ -256,7 +352,7 @@ export default function App()
 						<Input
 							label={`Stock Ticker`}
 							labelPlacement='inside'
-							placeholder={`VTI`}
+							placeholder={`Enter a stock ticker...`}
 							isClearable={true}
 							maxLength={10}
 							name={`query`}
@@ -289,20 +385,7 @@ export default function App()
 						overflow-x-hidden
 						relative
 					`}>
-						<div className={`
-							w-full h-full
-							flex flex-col
-							justify-center
-							justify-items-center
-							${loading ? '' : 'hidden'}
-						`}>
-							<Spinner size='lg' classNames={
-								{
-									circle1: 'border-b-red-500',
-									circle2: 'border-b-red-500'
-								}
-							}/>
-						</div>
+						<LoadingContent loading={loading}/>
 						<div className={`
 							w-full h-full
 							max-w-full
@@ -320,47 +403,39 @@ export default function App()
 								`}>Analysis for '{result.query}'</h2>
 								<p className={``}>Overall sentiment: {result.sentiment}</p>
 							</div>
-							<div className={`
-								flex flex-col md:flex-row
-								max-w-full
-								flex-wrap
-							`}>
-								<MetricResult
-									metricName={`Positive`}
-									metricValue={result?.metrics?.positive}
-									colors={{
-										indicatorStroke: 'stroke-green-700',
-										trackStroke: 'stroke-green-700/30',
-										text: 'text-green-700'
+							<MetricsDisplay result={result}/>
+							<div
+								className={`
+									flex flex-row
+									gap-3
+									px-3
+								`}
+							>
+								<Input
+									label={`Email`}
+									labelPlacement='inside'
+									placeholder={`Enter your email address...`}
+									isClearable={true}
+									maxLength={50}
+									name={`query`}
+									className={`min-h-[3.5rem] rounded-r-none shrink`}
+									classNames={{
+										inputWrapper: ''
 									}}
+									value={email}
+									onValueChange={setEmail}
+									type='email'
 								/>
-								<MetricResult
-									metricName={`Negative`}
-									metricValue={result?.metrics?.negative}
-									colors={{
-										indicatorStroke: 'stroke-red-500',
-										trackStroke: 'stroke-red-300',
-										text: 'text-red-500'
-									}}
-								/>
-								<MetricResult
-									metricName={`Mixed`}
-									metricValue={result?.metrics?.mixed}
-									colors={{
-										indicatorStroke: 'stroke-amber-500',
-										trackStroke: 'stroke-amber-500/30',
-										text: 'text-amber-500'
-									}}
-								/>
-								<MetricResult
-									metricName={`Neutral`}
-									metricValue={result?.metrics?.neutral}
-									colors={{
-										indicatorStroke: 'stroke-gray-500',
-										trackStroke: 'stroke-gray-500/30',
-										text: 'text-gray-500'
-									}}
-								/>
+								<Tooltip content={`Receive email notifications about this stock`} showArrow={true} placement="top">
+									<Button className={`h-[3.5rem]`} onPress={() => submitSubscribe(email)}>
+										Subscribe
+									</Button>
+								</Tooltip>
+								<Tooltip content={`Save this stock`} showArrow={true} placement="top">
+									<Button className={`h-[3.5rem]`} onPress={() => submitSave(email)}>
+										Save
+									</Button>
+								</Tooltip>
 							</div>
 						</div>
 						<div className={`
