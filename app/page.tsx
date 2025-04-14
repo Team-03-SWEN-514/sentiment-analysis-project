@@ -79,53 +79,102 @@ const submitQuery = async (query: string) =>
 	}
 }
 
-const submitSubscribe = async (email: string) =>
+const submitSubscribe = async (query: string, email: string) =>
 {
     try
     {
-        // await api.post(`/subscribe?email=${email}`)
+		await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/sns`,
+		{
+			ticker: query,
+			email: email,
+		},
+		{
+			headers: {
+				'Content-Type': 'text/json'
+			},
+		});
+
+		return (
+			{
+				status: 'success'
+			}
+		)
     }
 
     catch (e)
     {
-
+		return (
+			{
+				status: 'error',
+				message: 'Internal error'
+			}
+		)
     }
 }
 
 const submitSave = async (query: string, metrics: IMetrics | undefined) =>
 {
-	if (metrics === undefined)
+	try
 	{
-		throw Error("metrics are not defined")
+		if (metrics === undefined)
+		{
+			throw Error("metrics are not defined")
+		}
+
+		await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/db`,
+		{
+			ticker: query,
+			...metrics,
+		},
+		{
+			headers: {
+				'Content-Type': 'text/json'
+			},
+		});
+
+		return (
+			{
+				status: 'success'
+			}
+		)
 	}
 
-	await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/db`,
+	catch (e)
 	{
-		ticker: query,
-		...metrics,
-	},
-	{
-		headers: {
-			'Content-Type': 'text/json'
-		},
-	});
+		return (
+			{
+				status: 'error',
+				message: 'Internal error'
+			}
+		)
+	}
 }
 
 const getSavedStocks = async () =>
 {
 	try
 	{
-		await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/db`,
+		const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/db`,
 		{
 			headers: {
 				'Content-Type': 'text/json'
 			}
 		});
+
+		return ({
+			status: 'success',
+			saved: response.data.map((t: object) => t as ISavedResult)
+		})
 	}
 
 	catch (e)
 	{
-
+		return (
+			{
+				status: 'error',
+				message: 'Internal error'
+			}
+		)
 	}
 }
 
@@ -172,6 +221,11 @@ interface IMetrics
 	neutral: number
 }
 
+interface ISavedResult extends IMetrics
+{
+	ticker: string
+}
+
 interface IResult
 {
 	query: string
@@ -179,6 +233,7 @@ interface IResult
 	message?: string
 	sentiment?: string
 	metrics?: IMetrics
+	saved?: Array<ISavedResult>
 }
 
 interface IMetricResultColors
@@ -337,7 +392,7 @@ function ResultsContent({result, query, email, setEmail}: IResultsContentPropert
 					type='email'
 				/>
 				<Tooltip content={`Receive email notifications about this stock`} showArrow={true} placement="top">
-					<Button className={`h-[3.5rem]`} onPress={() => submitSubscribe(email)}>
+					<Button className={`h-[3.5rem]`} onPress={() => submitSubscribe(query, email)}>
 						Subscribe
 					</Button>
 				</Tooltip>
@@ -358,6 +413,9 @@ export default function App()
 	const [result, setResult] = useState<IResult>({} as IResult);
 	const [loading, setLoading] = useState(false);
 	const [email, setEmail] = useState('');
+
+	const [saved, setSaved] = useState<Array<ISavedResult>>([]);
+	const [showSaved, setShowSaved] = useState(false);
 
 	const onSubmit = async (e: FormEvent<HTMLFormElement>) =>
 	{
@@ -380,6 +438,28 @@ export default function App()
 		if (result.status !== 'success')
 		{
 			setError(result.message ?? '')
+		}
+	}
+
+	const onViewSaved = async () =>
+	{
+		setLoading(true)
+		setShowSaved(false)
+		setSaved([])
+		setError('')
+
+		const result = await getSavedStocks() as IResult
+		setLoading(false)
+
+		if (result.status !== 'success')
+		{
+			setError(result.message ?? '')
+		}
+
+		else
+		{
+			setSaved(result.saved ?? ([]))
+			setShowSaved(true)
 		}
 	}
 
@@ -456,7 +536,7 @@ export default function App()
 							bg-red-500
 							text-gray-100
 							font-medium
-						`}>
+						`} onPress={onViewSaved}>
 							View Saved Stocks
 						</Button>
 					</InsetSection>
