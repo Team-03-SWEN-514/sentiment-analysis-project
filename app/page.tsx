@@ -11,10 +11,9 @@ import {Button, CircularProgress, Form, Input, Spinner, Tooltip} from "@heroui/r
 // Axios API
 const api = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_API_URL,
-	withCredentials: true,
+	// withCredentials: true,
 	headers: {
-		'Content-Type': 'text/json',
-		'Access-Control-Allow-Credentials': 'true'
+		'Content-Type': 'text/json'
 	}
 });
 
@@ -47,7 +46,7 @@ const submitQuery = async (query: string) =>
 	try
 	{
 		// const response = await api.get(`/market?ticker=${query}`);
-		//
+
 		// const data = response.data['sentiment_response'][0] as ISentiment;
 
 		switch (query)
@@ -102,28 +101,28 @@ const submitQuery = async (query: string) =>
 
 const submitSubscribe = async (email: string) =>
 {
-	try
-	{
-		// await api.post(`/subscribe?email=${email}`)
-	}
+    try
+    {
+        // await api.post(`/subscribe?email=${email}`)
+    }
 
-	catch (e)
-	{
+    catch (e)
+    {
 
-	}
+    }
 }
 
 const submitSave = async (email: string) =>
 {
-	try
-	{
-		// await api.post(`/save?email=${email}`)
-	}
+    try
+    {
+        // await api.post(`/save?email=${email}`)
+    }
 
-	catch (e)
-	{
+    catch (e)
+    {
 
-	}
+    }
 }
 
 function InsetShadowOverlay({className=''}) {
