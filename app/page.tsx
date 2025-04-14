@@ -45,7 +45,12 @@ const submitQuery = async (query: string) =>
 
 	try
 	{
-		const response = await api.get(`/market?ticker=${query}`);
+		const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}?ticker=${query}`,
+		{
+			headers: {
+				'Content-Type': 'text/json'
+			}
+		});
 
 		const data = response.data['sentiment_response'][0] as ISentiment;
 
