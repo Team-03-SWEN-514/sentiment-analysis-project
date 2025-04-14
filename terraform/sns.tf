@@ -14,7 +14,7 @@ resource "aws_sns_topic_policy" "allow_public_subscribe" {
         Resource = aws_sns_topic.stock.arn
         Condition = {
           StringLike = {
-            "SNS:Protocol" = ["email", "sms", "application"]
+            "SNS:Protocol" = ["email", "application"]
           }
         }
       }
