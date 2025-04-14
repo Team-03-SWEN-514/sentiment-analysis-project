@@ -12,6 +12,9 @@ import {Button, CircularProgress, Form, Input, Spinner, Tooltip} from "@heroui/r
 const api = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_API_URL,
 	withCredentials: true,
+	headers: {
+		'Content-Type': 'text/json'
+	}
 });
 
 interface ISentimentScore
