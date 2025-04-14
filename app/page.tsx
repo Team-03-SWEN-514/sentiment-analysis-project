@@ -46,8 +46,8 @@ const submitQuery = async (query: string) => {
 
   try {
     const url =
-      "https://agkio2u6sd.execute-api.us-east-2.amazonaws.com/market?ticker=";
-    const response = await api.get(`${url}${query}`);
+      "https://agkio2u6sd.execute-api.us-east-2.amazonaws.com/market";
+    const response = await api.get(`${url}?ticker=${query}`);
 
     const data = response.data["sentiment_response"][0] as ISentiment;
 
