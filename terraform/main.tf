@@ -116,4 +116,4 @@ resource "aws_instance" "my_server" {
   }
   vpc_security_group_ids = [ aws_security_group.vpc-web.id ]
   associate_public_ip_address = true
-  }
+}
