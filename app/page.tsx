@@ -151,7 +151,7 @@ const insetSectionClassName = `
 	relative
 `;
 
-function InsetSection({children, className = ''}: {children?: React.ReactNode, className?: string}) {
+function InsetSection({children, className = '', overlayClassName = ''}: {children?: React.ReactNode, className?: string, overlayClassName?: string}) {
 	return (
 		<div className={`
 			${insetSectionClassName}
@@ -159,7 +159,7 @@ function InsetSection({children, className = ''}: {children?: React.ReactNode, c
 			${className}
 		`}>
 			{children}
-			<InsetShadowOverlay/>
+			<InsetShadowOverlay className={overlayClassName}/>
 		</div>
 	);
 }
@@ -405,34 +405,50 @@ export default function App()
 				<h1 className={`font-bold text-gray-100 text-2xl`}>
 					Stock Sentiments
 				</h1>
-				<Form
-					onSubmit={onSubmit}
-					className={`
-						flex flex-row
-						gap-0
-						drop-shadow-lg
-					`}
-				>
-					<InsetSection className={`
-						flex flex-row w-full
-						gap-0
-						bg-opacity-100
-					`}>
-						<Input
-							label={`Stock Ticker`}
-							labelPlacement='inside'
-							placeholder={`Enter a stock ticker...`}
-							isClearable={true}
-							maxLength={10}
-							name={`query`}
-							className={`h-[3.5rem] rounded-r-none`}
-							classNames={{
-								inputWrapper: 'rounded-r-none'
-							}}
-							value={query}
-							onValueChange={setQuery}
-							type='text'
-						/>
+				<div className={`flex flex-row gap-1 w-full`}>
+					<Form
+						onSubmit={onSubmit}
+							className={`
+							flex flex-row
+							grow
+							gap-0
+							drop-shadow-lg
+						`}
+					>
+						<InsetSection overlayClassName={'rounded-xl'} className={`
+							flex flex-row w-full
+							gap-0
+							bg-opacity-100
+							rounded-xl
+						`}>
+							<Input
+								label={`Stock Ticker`}
+								labelPlacement='inside'
+								placeholder={`Enter a stock ticker...`}
+								isClearable={true}
+								maxLength={10}
+								name={`query`}
+								className={`h-[3.5rem] rounded-r-none`}
+								classNames={{
+									inputWrapper: 'rounded-r-none'
+								}}
+								value={query}
+								onValueChange={setQuery}
+								type='text'
+							/>
+							<Button type={`submit`} className={`
+							h-[3.5rem]
+							rounded-l-none
+							drop-shadow-lg
+							bg-red-500
+							text-gray-100
+							font-medium
+						`}>
+								Submit
+							</Button>
+						</InsetSection>
+					</Form>
+					<InsetSection overlayClassName={'rounded-xl'}>
 						<Button type={`submit`} className={`
 							h-[3.5rem]
 							rounded-l-none
@@ -441,11 +457,11 @@ export default function App()
 							text-gray-100
 							font-medium
 						`}>
-							Submit
+							View Saved Stocks
 						</Button>
 					</InsetSection>
-				</Form>
-				<InsetSection className={`
+				</div>
+				<InsetSection overlayClassName={'rounded-xl'} className={`
 					h-[50vh] 
 					bg-gray-200
 					!bg-opacity-100
