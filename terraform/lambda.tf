@@ -25,7 +25,6 @@ resource "aws_lambda_function" "news_lambda" {
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.13"
   filename      = data.archive_file.lambda_zip.output_path
-
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 
   layers = [
@@ -41,6 +40,12 @@ resource "aws_lambda_function" "sns_lambda" {
   filename      = data.archive_file.lambda_zip.output_path
 
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+
+  environment {
+    variables = {
+      SNS_TOPIC_ARN = aws_sns_topic.alerts.arn
+    }
+  }
 
   layers = [
     aws_lambda_layer_version.yfinance.arn

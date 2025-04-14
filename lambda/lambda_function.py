@@ -48,11 +48,11 @@ def lambda_handler(event, context):
     }
 
 
-sns = boto3.client("sns", region="us-east-2")
-TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
+sns = boto3.client("sns", region_name="us-east-2")
 
 
 def sns_event_function(event, context):
+    TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
     try:
         json_body = json.loads(event["body"])
         email = json_body.get("email")  # gets email from json request
