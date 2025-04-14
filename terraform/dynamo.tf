@@ -2,12 +2,16 @@
   name           = "sentiment_results"
   billing_mode   = "PAY_PER_REQUEST" 
   hash_key       = "ticker"
+  range_key      = "email"
 
   attribute {
     name = "ticker"
     type = "S" 
   }
-
+  attribute {
+  name = "email"
+  type = "S"
+}
   attribute {
     name = "positive"
     type = "N"
