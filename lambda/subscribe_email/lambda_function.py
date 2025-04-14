@@ -22,7 +22,7 @@ def lambda_handler(event, context):
             Endpoint = email
         )
 
-        return {
+        return { # Response if successful, function should send a confirmation email to user 
             'statusCode': 200,
             'body': json.dumps({'message' : "you have subscribed to recieve notifcations. Check for a confirmation email in your inbox."})
         }
