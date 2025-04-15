@@ -52,6 +52,27 @@ resource "aws_lambda_function" "sns_lambda" {
   ]
 }
 
+
+resource "aws_lambda_function" "publish_lambda" {
+  function_name = "publish_lambda"
+  role          = aws_iam_role.lambda_exec.arn
+  handler       = "lambda_function.sns_send_data"
+  runtime       = "python3.13"
+  filename      = data.archive_file.lambda_zip.output_path
+
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+
+  environment {
+    variables = {
+      SNS_TOPIC_ARN = aws_sns_topic.alerts.arn
+    }
+  }
+
+  layers = [
+    aws_lambda_layer_version.yfinance.arn
+  ]
+}
+
 resource "aws_lambda_function" "add_sentiment_result" {
   function_name = "add_sentiment_result"
   role          = aws_iam_role.lambda_exec.arn
