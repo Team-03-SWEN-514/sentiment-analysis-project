@@ -125,7 +125,7 @@ def sns_send_data(event, context):
             f"Positive: {metrics.get('positive')}\n"
             f"Negative: {metrics.get('negative')}\n"
             f"Mixed: {metrics.get('mixed')}\n"
-            f"Neutral: {metrics.get('neutral')}"
+            f"Neutral: {metrics.get('neutral')}\n"
         )
 
         response = sns.publish (  # sends subscription request to sns using user email
