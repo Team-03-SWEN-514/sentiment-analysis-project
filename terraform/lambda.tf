@@ -53,7 +53,7 @@ resource "aws_lambda_function" "sns_lambda" {
 }
 
 
-resource "aws_lambda_function" "publish_lambda" {
+resource "aws_lambda_function" "sns_publish_lambda" {
   function_name = "publish_lambda"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "lambda_function.sns_send_data"
