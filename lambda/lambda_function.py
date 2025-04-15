@@ -118,17 +118,19 @@ def sns_send_data(event, context):
                 },
                 "body": json.dumps({"message": "error sending data to user"}),
             }
+        
+        message = (
+            f"Stock Update for {ticker}\n"
+            f"Scores:\n"
+            f"Positive: {metrics.get('positive')}\n"
+            f"Negative: {metrics.get('negative')}\n"
+            f"Mixed: {metrics.get('mixed')}\n"
+            f"Neutral: {metrics.get('neutral')}"
+        )
 
-        response = sns.publish(  # sends subscription request to sns using user email
+        response = sns.publish (  # sends subscription request to sns using user email
             TopicArn=TOPIC_ARN,
-            Message=(
-                f"Stock Update for {ticker}\n",
-                f"Scores: \n",
-                f"Positive: {metrics.get('positive')}\n",
-                f"Negative: {metrics.get('negative')}\n",
-                f"Mixed: {metrics.get('mixed')}\n",
-                f"Neutral: {metrics.get('neutral')}\n",
-            ),
+            Message=message,
             Subject=f"Stock Alert: {ticker}",
         )
 
