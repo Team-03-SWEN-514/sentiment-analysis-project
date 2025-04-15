@@ -106,12 +106,9 @@ def sns_send_data(event, context):
         json_body = json.loads(event["body"])
 
         ticker = json_body.get("ticker")
-        sentiment = json_body.get("sentiment")
-        scores = json_body.get("sentimentScore")
+        metrics = json_body.get("sentiment")
 
-        stock_data = json_body.get("stock_data")  # gets email from json request
-
-        if not stock_data:
+        if not metrics and not ticker:
             return {
                 "statusCode": 400,
                 "headers": {
@@ -119,19 +116,18 @@ def sns_send_data(event, context):
                     "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
                     "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
                 },
-                "body": json.dumps({"message": "email is required for sign up"}),
+                "body": json.dumps({"message": "error sending data to user"}),
             }
 
         response = sns.publish(  # sends subscription request to sns using user email
             TopicArn=TOPIC_ARN,
             Message=(
                 f"Stock Update for {ticker}\n",
-                f"Overall Stock Sentiment {sentiment}\n",
                 f"Scores: \n",
-                f"Positive: {scores.get('positive')}\n",
-                f"Negative: {scores.get('negative')}\n",
-                f"Mixed: {scores.get('mixed')}\n",
-                f"Neutral: {scores.get('neutral')}\n",
+                f"Positive: {metrics.get('positive')}\n",
+                f"Negative: {metrics.get('negative')}\n",
+                f"Mixed: {metrics.get('mixed')}\n",
+                f"Neutral: {metrics.get('neutral')}\n",
             ),
             Subject=f"Stock Alert: {ticker}",
         )
