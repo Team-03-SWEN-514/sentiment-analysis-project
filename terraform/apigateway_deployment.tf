@@ -6,6 +6,7 @@ resource "aws_api_gateway_deployment" "market_api_deployment" {
     aws_api_gateway_integration.update_sentiment_result,
     aws_api_gateway_integration.get_sentiment_result,
     aws_api_gateway_integration.sns_proxy,
+    aws_api_gateway_integration.sns_publish_proxy,
 
     aws_api_gateway_integration.options_root,
     aws_api_gateway_method_response.options_root,
