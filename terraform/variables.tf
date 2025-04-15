@@ -16,7 +16,7 @@ variable "ami_id"{
 variable "key_pair"{
     description = "My keypair"
     type = string
-    default = "default-keypair"
+    default = "EC2"
 }
 variable "public_subnet_cidrs" {
  type        = list(string)
