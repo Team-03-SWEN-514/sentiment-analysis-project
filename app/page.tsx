@@ -207,7 +207,7 @@ const getSavedStocks = async () =>
 {
 	try
 	{
-		const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/db`,
+		const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/db?ticker`,
 		{
 			headers: {
 				'Content-Type': 'text/json'
@@ -480,6 +480,7 @@ export default function App()
 		e.preventDefault()
 
 		setLoading(true)
+		setShowSaved(false)
 		setResult({} as IResult)
 		setError('')
 
@@ -502,6 +503,7 @@ export default function App()
 	const onViewSaved = async () =>
 	{
 		setLoading(true)
+		setResult({} as IResult)
 		setShowSaved(false)
 		setSaved([])
 		setError('')
@@ -611,6 +613,22 @@ export default function App()
 						relative
 					`}>
 						<LoadingContent loading={loading}/>
+						<div className={`
+							${showSaved ? '' : 'hidden'}
+						`}>
+							{
+								saved.map(s => (
+									<div key={s.ticker} className={`flex flex-row px-3`}>
+										<p className={`font-bold text-large align-middle self-center px-5`}>{s.ticker}</p>
+										<MetricsDisplay result={{
+											query: '',
+											status: 'success',
+											metrics: s
+										}}/>
+									</div>
+								))
+							}
+						</div>
 						<ResultsContent email={email} result={result} query={query} setEmail={setEmail}/>
 						<div className={`
 							w-full h-full
