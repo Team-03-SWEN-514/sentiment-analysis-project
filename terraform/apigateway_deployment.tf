@@ -13,7 +13,15 @@ resource "aws_api_gateway_deployment" "market_api_deployment" {
 
     aws_api_gateway_integration.options_db,
     aws_api_gateway_method_response.options_db,
-    aws_api_gateway_integration_response.options_db_response
+    aws_api_gateway_integration_response.options_db_response,
+
+    aws_api_gateway_integration.options_sns,
+    aws_api_gateway_method_response.options_sns,
+    aws_api_gateway_integration_response.options_sns_response,
+
+    aws_api_gateway_integration.options_sns_publish,
+    aws_api_gateway_method_response.options_sns_publish,
+    aws_api_gateway_integration_response.options_sns_publish_response
   ]
   rest_api_id = aws_api_gateway_rest_api.market_api.id
   description = "Deploying all routes"

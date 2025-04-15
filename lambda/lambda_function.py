@@ -60,6 +60,11 @@ def sns_event_function(event, context):
         if not email:
             return {
                 "statusCode": 400,
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                    "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+                },
                 "body": json.dumps({"message": "email is required for sign up"}),
             }
 
@@ -86,30 +91,40 @@ def sns_event_function(event, context):
         return {
             "isBase64Encoded": False,
             "statusCode": 400,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+            },
             "body": json.dumps({"message": "An error has occurred"}),
         }
+
 
 def sns_send_data(event, context):
     TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
     try:
-        json_body = json.loads(event['body'])
+        json_body = json.loads(event["body"])
 
-        ticker = json_body.get('ticker')
-        sentiment = json_body.get('sentiment')
-        scores = json_body.get('sentimentScore')
+        ticker = json_body.get("ticker")
+        sentiment = json_body.get("sentiment")
+        scores = json_body.get("sentimentScore")
 
-
-        stock_data = json_body.get('stock_data') # gets email from json request
+        stock_data = json_body.get("stock_data")  # gets email from json request
 
         if not stock_data:
             return {
-                'statusCode': 400,
-                'body': json.dumps({'message' : 'email is required for sign up'})
+                "statusCode": 400,
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                    "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+                },
+                "body": json.dumps({"message": "email is required for sign up"}),
             }
-        
-        response = sns.publish( # sends subscription request to sns using user email
-            TopicArn = TOPIC_ARN,
-            Message = (
+
+        response = sns.publish(  # sends subscription request to sns using user email
+            TopicArn=TOPIC_ARN,
+            Message=(
                 f"Stock Update for {ticker}\n",
                 f"Overall Stock Sentiment {sentiment}\n",
                 f"Scores: \n",
@@ -117,18 +132,27 @@ def sns_send_data(event, context):
                 f"Negative: {scores.get('negative')}\n",
                 f"Mixed: {scores.get('mixed')}\n",
                 f"Neutral: {scores.get('neutral')}\n",
-
             ),
-            Subject=f"Stock Alert: {ticker}"
+            Subject=f"Stock Alert: {ticker}",
         )
-        
+
         return {
-            'statusCode': 200,
-            'body': json.dumps({'message': 'Stock alert email sent.'})
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+            },
+            "body": json.dumps({"message": "Stock alert email sent."}),
         }
 
     except Exception as error:
         return {
-            'statusCode': 400,
-            'body': json.dumps({'message' : 'An error has occurred'})
+            "statusCode": 400,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+            },
+            "body": json.dumps({"message": "An error has occurred"}),
         }
