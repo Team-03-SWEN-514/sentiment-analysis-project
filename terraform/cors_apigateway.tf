@@ -49,14 +49,14 @@ resource "aws_api_gateway_method_response" "options_root" {
 
 resource "aws_api_gateway_method" "options_db" {
   rest_api_id   = aws_api_gateway_rest_api.market_api.id
-  resource_id   = data.aws_api_gateway_resource.db.id
+  resource_id   = aws_api_gateway_resource.db.id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "options_db" {
   rest_api_id          = aws_api_gateway_rest_api.market_api.id
-  resource_id          = data.aws_api_gateway_resource.db.id
+  resource_id          = aws_api_gateway_resource.db.id
   http_method          = aws_api_gateway_method.options_db.http_method
   type                 = "MOCK"
   passthrough_behavior = "WHEN_NO_MATCH"
@@ -69,7 +69,7 @@ resource "aws_api_gateway_integration" "options_db" {
 resource "aws_api_gateway_integration_response" "options_db_response" {
   depends_on  = [aws_api_gateway_integration.options_db]
   rest_api_id = aws_api_gateway_rest_api.market_api.id
-  resource_id = data.aws_api_gateway_resource.db.id
+  resource_id = aws_api_gateway_resource.db.id
   http_method = aws_api_gateway_method.options_db.http_method
   status_code = "200"
 
@@ -86,7 +86,7 @@ resource "aws_api_gateway_integration_response" "options_db_response" {
 
 resource "aws_api_gateway_method_response" "options_db" {
   rest_api_id = aws_api_gateway_rest_api.market_api.id
-  resource_id = data.aws_api_gateway_resource.db.id
+  resource_id = aws_api_gateway_resource.db.id
   http_method = aws_api_gateway_method.options_db.http_method
   status_code = "200"
 
@@ -99,14 +99,14 @@ resource "aws_api_gateway_method_response" "options_db" {
 
 resource "aws_api_gateway_method" "options_sns" {
   rest_api_id   = aws_api_gateway_rest_api.market_api.id
-  resource_id   = data.aws_api_gateway_resource.sns.id
+  resource_id   = aws_api_gateway_resource.sns.id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "options_sns" {
   rest_api_id          = aws_api_gateway_rest_api.market_api.id
-  resource_id          = data.aws_api_gateway_resource.sns.id
+  resource_id          = aws_api_gateway_resource.sns.id
   http_method          = aws_api_gateway_method.options_sns.http_method
   type                 = "MOCK"
   passthrough_behavior = "WHEN_NO_MATCH"
@@ -119,7 +119,7 @@ resource "aws_api_gateway_integration" "options_sns" {
 resource "aws_api_gateway_integration_response" "options_sns_response" {
   depends_on  = [aws_api_gateway_integration.options_sns]
   rest_api_id = aws_api_gateway_rest_api.market_api.id
-  resource_id = data.aws_api_gateway_resource.sns.id
+  resource_id = aws_api_gateway_resource.sns.id
   http_method = aws_api_gateway_method.options_sns.http_method
   status_code = "200"
 
@@ -136,7 +136,7 @@ resource "aws_api_gateway_integration_response" "options_sns_response" {
 
 resource "aws_api_gateway_method_response" "options_sns" {
   rest_api_id = aws_api_gateway_rest_api.market_api.id
-  resource_id = data.aws_api_gateway_resource.sns.id
+  resource_id = aws_api_gateway_resource.sns.id
   http_method = aws_api_gateway_method.options_sns.http_method
   status_code = "200"
 
@@ -149,14 +149,14 @@ resource "aws_api_gateway_method_response" "options_sns" {
 
 resource "aws_api_gateway_method" "options_sns_publish" {
   rest_api_id   = aws_api_gateway_rest_api.market_api.id
-  resource_id   = data.aws_api_gateway_resource.sns_publish.id
+  resource_id   = aws_api_gateway_resource.sns_publish.id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "options_sns_publish" {
   rest_api_id          = aws_api_gateway_rest_api.market_api.id
-  resource_id          = data.aws_api_gateway_resource.sns_publish.id
+  resource_id          = aws_api_gateway_resource.sns_publish.id
   http_method          = aws_api_gateway_method.options_sns_publish.http_method
   type                 = "MOCK"
   passthrough_behavior = "WHEN_NO_MATCH"
@@ -169,7 +169,7 @@ resource "aws_api_gateway_integration" "options_sns_publish" {
 resource "aws_api_gateway_integration_response" "options_sns_publish_response" {
   depends_on  = [aws_api_gateway_integration.options_sns_publish]
   rest_api_id = aws_api_gateway_rest_api.market_api.id
-  resource_id = data.aws_api_gateway_resource.sns_publish.id
+  resource_id = aws_api_gateway_resource.sns_publish.id
   http_method = aws_api_gateway_method.options_sns_publish.http_method
   status_code = "200"
 
@@ -186,7 +186,7 @@ resource "aws_api_gateway_integration_response" "options_sns_publish_response" {
 
 resource "aws_api_gateway_method_response" "options_sns_publish" {
   rest_api_id = aws_api_gateway_rest_api.market_api.id
-  resource_id = data.aws_api_gateway_resource.sns_publish.id
+  resource_id = aws_api_gateway_resource.sns_publish.id
   http_method = aws_api_gateway_method.options_sns_publish.http_method
   status_code = "200"
 
