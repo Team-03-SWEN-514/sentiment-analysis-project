@@ -59,6 +59,25 @@ resource "aws_iam_policy" "dynamodb_full_access" {
   })
 }
 
+resource "aws_iam_policy" "sns_permissions" {
+  name        = "lambda-sns-access"
+  description = "Allow Lambda to publish and subscribe to SNS topic"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "sns:Publish",
+          "sns:Subscribe"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role_policy_attachment" "attach_comprehend" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = aws_iam_policy.comprehend_policy.arn
@@ -72,4 +91,9 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 resource "aws_iam_role_policy_attachment" "attach_dynamodb_full" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = aws_iam_policy.dynamodb_full_access.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_sns" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = aws_iam_policy.sns_permissions.arn
 }

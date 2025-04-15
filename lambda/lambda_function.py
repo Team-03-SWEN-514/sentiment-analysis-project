@@ -96,7 +96,7 @@ def sns_event_function(event, context):
                 "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
                 "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
             },
-            "body": json.dumps({"message": "An error has occurred"}),
+            "body": json.dumps({"message": f"An error has occurred\n{error}"}),
         }
 
 
@@ -154,5 +154,5 @@ def sns_send_data(event, context):
                 "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
                 "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
             },
-            "body": json.dumps({"message": "An error has occurred"}),
+            "body": json.dumps({"message": f"An error has occurred\n{error}"}),
         }
