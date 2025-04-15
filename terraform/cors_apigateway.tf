@@ -134,10 +134,58 @@ resource "aws_api_gateway_integration_response" "options_sns_response" {
   }
 }
 
+
+resource "aws_api_gateway_integration_response" "sns_publish_response" {
+  rest_api_id = aws_api_gateway_rest_api.market_api.id
+  resource_id = aws_api_gateway_resource.sns_publish.id
+  http_method = aws_api_gateway_method.publish_message.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,OPTIONS,PATCH'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+
+  response_templates = {
+    "application/json" = ""
+  }
+}
+
+resource "aws_api_gateway_method_response" "publish_message_response" {
+  rest_api_id = aws_api_gateway_rest_api.market_api.id
+  resource_id = aws_api_gateway_resource.sns_publish.id
+  http_method = aws_api_gateway_method.publish_message.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+  
+  response_templates = {
+    "application/json" = ""
+  }
+}
+
 resource "aws_api_gateway_method_response" "options_sns" {
   rest_api_id = aws_api_gateway_rest_api.market_api.id
   resource_id = aws_api_gateway_resource.sns.id
   http_method = aws_api_gateway_method.options_sns.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "options_sns_publish" {
+  rest_api_id = aws_api_gateway_rest_api.market_api.id
+  resource_id = aws_api_gateway_resource.sns_publish.id
+  http_method = aws_api_gateway_method.options_sns_publish.http_method
   status_code = "200"
 
   response_parameters = {
