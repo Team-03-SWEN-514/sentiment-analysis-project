@@ -40,39 +40,24 @@ const submitNotificationRequest = async (query: string, metrics: IMetrics | unde
 				throw Error("metrics are not defined")
 			}
 
-			const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}?ticker=${query}`,
-				{
-					headers: {
-						'Content-Type': 'text/json'
-					}
-				});
-		
-			const data = response.data['sentiment_response'][0] as ISentiment;
-		
 			await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/sns/publish`,
 			{
 				ticker: query,
-				sentiment: data.Sentiment,
-				metrics: {
-					positive: data.SentimentScore.Positive,
-					negative: data.SentimentScore.Negative,
-					neutral: data.SentimentScore.Neutral,
-					mixed: data.SentimentScore.Mixed,
-				}
+				metrics: metrics
 			},
 			{
 				headers: {
 					'Content-Type': 'text/json'
 				},
 			});
-	
+
 			return (
 				{
 					status: 'success'
 				}
 			)
 		}
-	
+
 		catch (e)
 		{
 			return (
