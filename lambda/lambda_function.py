@@ -106,7 +106,7 @@ def sns_send_data(event, context):
         json_body = json.loads(event["body"])
 
         ticker = json_body.get("ticker")
-        metrics = json_body.get("sentiment")
+        metrics = json_body.get("metrics")
 
         if not metrics and not ticker:
             return {
