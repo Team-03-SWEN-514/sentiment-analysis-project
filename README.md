@@ -23,18 +23,6 @@ The project can also be set up completely using AWS and terraform, by spinning u
 
 *see Terraform (EC2) and Frontend (Amplify)*
 
-### Terraform (Local)
-
-1. Install the AWS CLI and the terraform CLI
-	- Run `terraform init` to verify the installation
-2. Configure AWS credentials via `aws configure`
-3. `cd` into the project terraform folder (where `main.tf` is located)
-4. Create a `terraform.tfvars` file in the same directory and add your EC2 keypair
-	- `key_pair = "YOUR_KEY_NAME_HERE"`
-5. Run `terraform plan` to confirm you are in the correct location
-6. Run `terraform apply` and type `yes` when prompted
-7. Run `terraform destroy` and type `yes` when prompted to destroy the created resources
-
 ### Terraform (EC2)
 
 1. Create a new EC2 instance
@@ -50,6 +38,36 @@ The project can also be set up completely using AWS and terraform, by spinning u
 8. Run `terraform plan` to confirm you are in the correct location
 9. Run `terraform apply` and type `yes` when prompted
 10. Run `terraform destroy` and type `yes` when prompted to destroy the created resources
+
+### Frontend (Amplify)
+
+1. Open your AWS console after the terraform finishes executing (from previous setup)
+2. Navigate to AWS Amplify
+3. Click on the app titled `stock_sentiment_app`
+4. Under 'branches', click on `amplify`
+	- It should say 'no deploys' under the branch
+5. Click 'run job' when prompted:
+![alt text](image.png)
+6. Wait for the frontend to build on amplify
+	- This will take 7-10 minutes
+7. After build has completed, navigate to the domain listed under the deployment
+8. Interact with the app as desired
+
+## Fallbacks
+
+Alternative setup methods in case there are issues with running just the main branch terraform code via EC2 or deploying the frontend with amplify.
+
+### Terraform (Local)
+
+1. Install the AWS CLI and the terraform CLI
+	- Run `terraform init` to verify the installation
+2. Configure AWS credentials via `aws configure`
+3. `cd` into the project terraform folder (where `main.tf` is located)
+4. Create a `terraform.tfvars` file in the same directory and add your EC2 keypair
+	- `key_pair = "YOUR_KEY_NAME_HERE"`
+5. Run `terraform plan` to confirm you are in the correct location
+6. Run `terraform apply` and type `yes` when prompted
+7. Run `terraform destroy` and type `yes` when prompted to destroy the created resources
 
 ### Frontend (Local)
 
@@ -67,17 +85,3 @@ The project can also be set up completely using AWS and terraform, by spinning u
 6. Navigate to `https://localhost:3000` (or `http://localhost:3000`) to view the frontend
 	- It may take a few moments to load while the page is initially compiled
 7. Interact with the app as desired
-
-### Frontend (Amplify)
-
-1. Open your AWS console after the terraform finishes executing (from previous setup)
-2. Navigate to AWS Amplify
-3. Click on the app titled `stock_sentiment_app`
-4. Under 'branches', click on `amplify`
-	- It should say 'no deploys' under the branch
-5. Click 'run job' when prompted:
-![alt text](image.png)
-6. Wait for the frontend to build on amplify
-	- This will take 7-10 minutes
-7. After build has completed, navigate to the domain listed under the deployment
-8. Interact with the app as desired
