@@ -74,7 +74,7 @@ The project can also be set up completely using AWS and terraform, by spinning u
 2. Navigate to AWS Amplify
 3. Click on the app titled `stock_sentiment_app`
 4. Under 'branches', click on `amplify`
-	- It should say 'no deploys' under the branch YOUR_KEY_NAME_HERE
+	- It should say 'no deploys' under the branch
 5. Click 'run job' when prompted:
 ![alt text](image.png)
 6. Wait for the frontend to build on amplify
