@@ -29,6 +29,8 @@ The project can also be set up completely using AWS and terraform, by spinning u
 2. Install terraform
 	- Run `terraform init` to verify the installation
 3. Configure AWS credentials via `aws configure`
+	- You will need a root access key created from the account security options
+	- Also make sure to specify `us-east-2` for the region when prompted
 4. Upload project terraform files to an S3 bucket
 	- Including the `lambda` AND `terraform` folders
 5. Copy all uploaded files to the EC2 instance
