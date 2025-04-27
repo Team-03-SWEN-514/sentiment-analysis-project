@@ -78,6 +78,27 @@ resource "aws_iam_policy" "sns_permissions" {
   })
 }
 
+resource "aws_iam_policy" "amplify_ssm_full_access" {
+  name        = "amplify-ssm-full-access"
+  description = "Allow Amplify full access to SSM"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement: [
+      {
+        Effect: "Allow",
+        Action: "ssm:*",  # <-- all SSM actions
+        Resource: "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "amplify_attach_ssm_full_access" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = aws_iam_policy.amplify_ssm_full_access.arn
+}
+
 resource "aws_iam_role_policy_attachment" "attach_comprehend" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = aws_iam_policy.comprehend_policy.arn
